@@ -1,0 +1,2 @@
+C:\Users\usuario\source\repos\BresoGUI\x64\Debug\BresoGUI.dll
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\x64\Debug\BresoGUI.dll
