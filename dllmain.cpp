@@ -1,7 +1,13 @@
 #include <windows.h>
+#include <CommCtrl.h>
+#include <WinUser.h>
 #include <iostream>
 #include <vector>
-#include "pch.h"
+#include "pch.h" 
+#include <fstream>
+#include <string>
+#include <locale>
+#include <codecvt>
 using namespace std;
 
 //Identificadores dos controles
@@ -15,25 +21,36 @@ enum Botoes {
     ComboBox = 106,
     Textarea = 107,
     ProgressBar = 108,
+    Radio1 = 109,
+    CheckBox_Status = 110,
+    RadioStatus = 111,
 };
 
-LPCWSTR TitulosJanela = L"Biroleibe";
+LPCWSTR TitulosJanela = L"Biroleibe do Piru";
 int LarguraJanela = 500;
 int AlturaJanela = 500;
 int CorDaJanelaRGB[] = { 100,100,100 };
  
  
- 
-#define IDC_TEXTAREA        104 
-#define IDC_RADIO1          106
-#define IDC_RADIO2          107
-#define IDC_PROGRESS        108
-#define IDC_CHECKBOX_STATUS 109
-#define IDC_INPUT_TEXT      110
-#define IDC_TEXTAREA_TEXT   111
+HFONT hFont = CreateFont(
+    15,                        // Altura da fonte
+    0,                         // Largura da fonte
+    0,                         // Ângulo de escapamento
+    0,                         // Ângulo de orientação
+    FW_BOLD,                   // Espessura da fonte
+    FALSE,                     // Itálico
+    FALSE,                     // Sublinhado
+    FALSE,                     // Riscado
+    DEFAULT_CHARSET,           // Conjunto de caracteres
+    OUT_DEFAULT_PRECIS,        // Precisão de saída
+    CLIP_DEFAULT_PRECIS,       // Precisão de recorte
+    DEFAULT_QUALITY,           // Qualidade da fonte
+    DEFAULT_PITCH | FF_SWISS,  // Família e espaçamento da fonte
+    L"Arial"                   // Nome da fonte
+);
 
-// Definição da mensagem PBM_SETPOS
-#define PBM_SETPOS      (WM_USER+2)
+ 
+ 
 
 
 LPCWSTR GET_INPUT_TEXT(HWND hwnd,int BotaoENUM)
@@ -54,6 +71,30 @@ bool IF_CHECKBOX_CHECKED(HWND hwnd, int CheckboxEnum )
     return oi;
 }
 
+/*
+bool IF_CHECKBOX_CHANGED(HWND hwnd, int CheckboxEnum )
+{
+    //LOWORD(wParam) == IDC_CHECKBOX_STATUS && HIWORD(wParam) == BN_CLICKED
+    BOOL oi =  SendMessageW(GetDlgItem(hwnd, CheckboxEnum), BM_GETCHECK, 0, 0) == BN_CLICKED;
+    return oi;
+}
+*/
+
+/*
+bool IF_RADIO_CHANGED(HWND hwnd, int RADIOEnum )
+{
+    //LOWORD(wParam) == IDC_CHECKBOX_STATUS && HIWORD(wParam) == BN_CLICKED
+    BOOL oi =  SendMessageW(GetDlgItem(hwnd, RADIOEnum), BM_GETCHECK, 0, 0) == BN_CLICKED;
+    return oi;
+}
+*/
+
+BOOL IF_RADIO_CHECKED(HWND hwnd, int RadioENUM)
+{
+    BOOL oi = SendMessageW(GetDlgItem(hwnd, RadioENUM), BM_GETCHECK, 0, 0) == BST_CHECKED;
+    return oi;
+}
+
 bool CLICOU_NO_BOTAO(HWND hwnd, WPARAM wParam, int BotaoENUM)
 {
     if (LOWORD(wParam) == BotaoENUM && HIWORD(wParam) == BN_CLICKED)
@@ -62,37 +103,45 @@ bool CLICOU_NO_BOTAO(HWND hwnd, WPARAM wParam, int BotaoENUM)
         return false;
 }
 
+
  
 
-void addButton(HWND hwnd, int BotaoENUM ,LPCWSTR Titulo = L"Botao", int posx = 10, int posy = 10, int largura = 80, int altura = 25 )
+void addButton(HWND hwnd, int BotaoENUM ,LPCWSTR Titulo = L"Botao", int posx = 10, int posy = 10, int largura = 80, int altura = 25, COLORREF corTexto = RGB(0, 0, 0), COLORREF corFundo = RGB(255, 0, 255))
 {
-    CreateWindowW(L"BUTTON", Titulo, WS_VISIBLE | WS_CHILD, posx, posy, largura, altura, hwnd, (HMENU)BotaoENUM, NULL, NULL);
+    HWND componente = CreateWindowW(L"BUTTON", Titulo, WS_VISIBLE | WS_CHILD, posx, posy, largura, altura, hwnd, (HMENU)BotaoENUM, NULL, NULL);
+    SendMessage(componente, WM_SETFONT, (WPARAM)hFont, TRUE);
+     
+     
 }
+ 
 
 void addInput(HWND hwnd, int BotaoENUM ,LPCWSTR placeholder = L"", int posx = 10, int posy = 10, int largura = 80, int altura = 25 )
 {
-    CreateWindowW(L"EDIT", placeholder, WS_VISIBLE | WS_CHILD, posx, posy, largura, altura, hwnd, (HMENU)BotaoENUM, NULL, NULL);
+    HWND componente = CreateWindowW(L"EDIT", placeholder, WS_VISIBLE | WS_CHILD, posx, posy, largura, altura, hwnd, (HMENU)BotaoENUM, NULL, NULL);
+    SendMessage(componente, WM_SETFONT, (WPARAM)hFont, TRUE);
 }
 
 void addCheckBox(HWND hwnd, int BotaoENUM ,LPCWSTR Titulo = L"Checkbox", int posx = 10, int posy = 155, int largura = 100, int altura = 25 )
 {
-    CreateWindowW(L"BUTTON", Titulo, WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX, posx, posy, largura, altura, hwnd, (HMENU)BotaoENUM, NULL, NULL);
- 
+    HWND componente = CreateWindowW(L"BUTTON", Titulo, WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX, posx, posy, largura, altura, hwnd, (HMENU)BotaoENUM, NULL, NULL);
+    SendMessage(componente, WM_SETFONT, (WPARAM)hFont, TRUE);
 }
 
 void addCombobox(HWND hwnd, int BotaoENUM , int posx = 260, int posy = 10, int largura = 150, int altura = 200)
 { 
-    CreateWindowW(L"COMBOBOX", NULL, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, posx, posy, largura, altura, hwnd, (HMENU)BotaoENUM, NULL, NULL);
-   
+    HWND componente = CreateWindowW(L"COMBOBOX", NULL, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, posx, posy, largura, altura, hwnd, (HMENU)BotaoENUM, NULL, NULL);
+    SendMessage(componente, WM_SETFONT, (WPARAM)hFont, TRUE);
 }
 
 void addComboboxItens(HWND hwnd, int BotaoENUM, LPCWSTR Item)
 {
-    SendMessageW(GetDlgItem(hwnd, BotaoENUM), CB_ADDSTRING, 0, (LPARAM)Item ); 
+      SendMessageW(GetDlgItem(hwnd, BotaoENUM), CB_ADDSTRING, 0, (LPARAM)Item );
+    //SendMessage(componente, WM_SETFONT, (WPARAM)hFont, TRUE);
 }
 
 void addTextarea(HWND hwnd, int BotaoENUM, int posx = 10, int posy = 45, int largura = 400, int altura = 100) {
-    CreateWindowW(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL, posx, posy, largura, altura, hwnd, (HMENU)BotaoENUM, NULL, NULL);
+    HWND componente = CreateWindowW(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL, posx, posy, largura, altura, hwnd, (HMENU)BotaoENUM, NULL, NULL);
+    SendMessage(componente, WM_SETFONT, (WPARAM)hFont, TRUE);
 }
 
 void addProgressBar(HWND hwnd, int BotaoENUM, int posx = 10, int posy = 215, int largura = 400, int altura = 25)
@@ -105,16 +154,105 @@ void SET_PROGRESS_BAR_VALUE(HWND hwnd, int BotaoENUM, int valor = 10)
     SendMessageW(GetDlgItem(hwnd, BotaoENUM), (WM_USER + 2), valor, 0);
 }
 
+void addRadio(HWND hwnd, int BotaoENUM, LPCWSTR Titulo = L"Radio", int posx = 10, int posy = 185, int largura = 100, int altura = 25) 
+{
+    HWND componente = CreateWindowW(L"BUTTON", Titulo, WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON, posx, posy, largura, altura, hwnd, (HMENU)BotaoENUM, NULL, NULL);
+    SendMessage(componente, WM_SETFONT, (WPARAM)hFont, TRUE);
+}
+
+
+
  
 
-// Função de callback para o procedimento da janela
+ 
+
+// Função para criar a lista
+void addListBox(HWND hwnd, int ListENUM, int posx = 10, int posy = 10, int largura = 200, int altura = 150)
+{
+    // Criar o ListBox
+    HWND hListBox = CreateWindowW(L"LISTBOX", NULL, WS_VISIBLE | WS_CHILD | LBS_STANDARD | LBS_NOTIFY,
+        posx, posy, largura, altura, hwnd, (HMENU)ListENUM, NULL, NULL);
+    SendMessage(hListBox, WM_SETFONT, (WPARAM)hFont, TRUE); 
+}
+
+// Função para adicionar itens à lista
+void addItemListBox(HWND hwnd, int ListENUM,LPCWSTR texto)
+{
+    // Adicionar um item ao ListBox
+    SendMessage(GetDlgItem(hwnd, ListENUM), LB_ADDSTRING, 0, (LPARAM)texto);
+}
+
+// Função para verificar se um item foi clicado
+BOOL IF_SELECIONOU_ITEM_LISTBOX(HWND hwnd, WPARAM wParam, int ListENUM)
+{
+    // Mensagem de clique no ListBox
+    if (HIWORD(wParam) == LBN_SELCHANGE) // Verifica se houve uma mudança na seleção do ListBox
+    {
+        int indexSelecionado = SendMessage(GetDlgItem(hwnd, ListENUM), LB_GETCURSEL, 0, 0); // Obtém o índice do item selecionado
+
+        if (indexSelecionado != LB_ERR) // Verifica se o índice é válido
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Função para retornar o texto do item selecionado
+LPCWSTR textoItemSelecionado(HWND hwnd,int ListENUM)
+{
+    int indexSelecionado = SendMessage(GetDlgItem(hwnd, ListENUM), LB_GETCURSEL, 0, 0); // Obtém o índice do item selecionado
+
+    if (indexSelecionado != LB_ERR) // Verifica se o índice é válido
+    {
+        static wchar_t textoSelecionado[256]; // Buffer para armazenar o texto selecionado
+        SendMessage(GetDlgItem(hwnd, ListENUM), LB_GETTEXT, (WPARAM)indexSelecionado, (LPARAM)textoSelecionado); // Obtém o texto do item selecionado
+        return textoSelecionado;
+    }
+    else
+    {
+        return L""; // Retorna uma string vazia se nenhum item estiver selecionado
+    }
+}
+
+
+
+ 
+
+
+void LOG(const std::string& nomeArquivo, const std::string& texto) { 
+    std::ofstream arquivo(nomeArquivo, std::ios::app); 
+    if (arquivo.is_open()) { 
+        arquivo << texto << std::endl; 
+        arquivo.close(); 
+    } 
+}
+
+std::string LPCWSTRToString(LPCWSTR texto) { 
+    std::wstring wtexto(texto);
+    wstring_convert< codecvt_utf8<wchar_t>> converter;
+    return converter.to_bytes(wtexto);
+}
+
+
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
     case WM_CREATE: {
+
+        
+
+        addListBox(hwnd,Botoes::Botao_1);
+        addItemListBox(hwnd, Botoes::Botao_1,L"a");
+        addItemListBox(hwnd, Botoes::Botao_1,L"b");
+        addItemListBox(hwnd, Botoes::Botao_1,L"c");
+        
+         
+        
+        /*
         // Criar os controles quando a janela é criada
         addButton(hwnd, Botoes::Botao_1, L"Botao 1", 10, 10, 80, 25 );
         addCheckBox(hwnd, Botoes::CheckBox,L"Minha checkbox");
-        addInput(hwnd, Botoes::Input_Text);
+        //  addInput(hwnd, Botoes::Input_Text);
          
         addCombobox(hwnd, Botoes::ComboBox );
         addComboboxItens(hwnd, Botoes::ComboBox,  L"Vermelhor");
@@ -124,49 +262,38 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         addTextarea(hwnd, Botoes::Textarea);
 
         addProgressBar(hwnd, Botoes::ProgressBar);
-
-        //CreateWindowW(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 100, 10, 150, 25, hwnd, (HMENU)Botoes::Input_Text, NULL, NULL);
-        //CreateWindowW(L"COMBOBOX", NULL, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 260, 10, 150, 200, hwnd, (HMENU)IDC_COMBOBOX, NULL, NULL);
-        //SendMessageW(GetDlgItem(hwnd, IDC_COMBOBOX), CB_ADDSTRING, 0, (LPARAM)L"Opção 1");
-        //SendMessageW(GetDlgItem(hwnd, IDC_COMBOBOX), CB_ADDSTRING, 0, (LPARAM)L"Opção 2");
-        //SendMessageW(GetDlgItem(hwnd, IDC_COMBOBOX), CB_ADDSTRING, 0, (LPARAM)L"Opção 3");
-        //CreateWindowW(L"EDIT", L"", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL, 10, 45, 400, 100, hwnd, (HMENU)IDC_TEXTAREA, NULL, NULL);
-        
-        CreateWindowW(L"BUTTON", L"Opção 1", WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON, 10, 185, 100, 25, hwnd, (HMENU)IDC_RADIO1, NULL, NULL);
-        CreateWindowW(L"BUTTON", L"Opção 2", WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON, 120, 185, 100, 25, hwnd, (HMENU)IDC_RADIO2, NULL, NULL);
-        //CreateWindowW(L"msctls_progress32", NULL, WS_VISIBLE | WS_CHILD, 10, 215, 400, 25, hwnd, (HMENU)IDC_PROGRESS, NULL, NULL);
-        
-        
-        //SendMessageW(GetDlgItem(hwnd, IDC_PROGRESS), PBM_SETPOS, 50, 0);
-
-        //CreateWindowW(L"BUTTON", L"Verificar Checkbox", WS_VISIBLE | WS_CHILD, 10, 250, 150, 25, hwnd, (HMENU)IDC_CHECKBOX_STATUS, NULL, NULL);
-        //CreateWindowW(L"BUTTON", L"Exibir Texto do Input", WS_VISIBLE | WS_CHILD, 170, 250, 150, 25, hwnd, (HMENU)IDC_INPUT_TEXT, NULL, NULL);
-        //CreateWindowW(L"BUTTON", L"Exibir Texto do Textarea", WS_VISIBLE | WS_CHILD, 330, 250, 150, 25, hwnd, (HMENU)IDC_TEXTAREA_TEXT, NULL, NULL);
+        addRadio(hwnd, Botoes::Radio1,L"Meu Radio");
+        */
         break;
     }
     case WM_COMMAND: {
         if (CLICOU_NO_BOTAO(hwnd,wParam,Botoes::Botao_1))
         {
-             MsgBox_OK(hwnd,  L"bla", L"Clicou VOID string"); 
+              MsgBox_OK(hwnd,  L"bla", L"Clicou VOID string"); 
         }
-        else if (LOWORD(wParam) == IDC_CHECKBOX_STATUS && HIWORD(wParam) == BN_CLICKED)
+        else if (CLICOU_NO_BOTAO(hwnd,wParam,Botoes::CheckBox))
         {
-            if (IF_CHECKBOX_CHECKED(hwnd, Botoes::CheckBox))
+            if (IF_CHECKBOX_CHECKED(hwnd,  Botoes::CheckBox))
                 MsgBox_OK(hwnd, L"bla", L"CheckBox marcado");
             else
                 MsgBox_OK(hwnd, L"bla", L"Checkbox nao marcado");
-        }
-        else if (LOWORD(wParam) == IDC_INPUT_TEXT && HIWORD(wParam) == BN_CLICKED) 
+        } 
+        else if (CLICOU_NO_BOTAO(hwnd, wParam, Botoes::Radio1))
         {
-             
-            MsgBox_OK(hwnd,  L"bla", GET_INPUT_TEXT(hwnd, Botoes::Input_Text));
-        }
-        else if (LOWORD(wParam) == IDC_TEXTAREA_TEXT && HIWORD(wParam) == BN_CLICKED) 
+            if (IF_RADIO_CHECKED(hwnd, Botoes::Radio1))
+                MsgBox_OK(hwnd, L"bla", L"Radio1 marcado");
+            else
+                MsgBox_OK(hwnd, L"bla", L"Radio1 nao marcado");
+        } 
+        else if (IF_SELECIONOU_ITEM_LISTBOX(hwnd, wParam, Botoes::Botao_1))
         {
-            MsgBox_OK(hwnd, L"bla", GET_INPUT_TEXT(hwnd, Botoes::Textarea));
+            //MsgBox_OK(hwnd, L"", textoItemSelecionado(hwnd, Botoes::Botao_1));
+            LOG("C:/Users/usuario/Documents/GitHub/BresoGUI-DLL/log.txt", LPCWSTRToString(textoItemSelecionado(hwnd, Botoes::Botao_1)));
         }
+
         break;
     }
+  
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
@@ -176,7 +303,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     return 0;
 }
 
-void loop()
+void loop( )
 {
      
 }
