@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+	html,body{
+	background-color: black;
+	}
+
+    .form {
+        position: fixed;
+        width: 500px;
+        height: 500px;
+        left: 0;
+        top: 0;
+        background-color: rgb(188, 188, 188);
+		 
+    }
+
+    button {
+        position: fixed;
+        width: 80px;
+        height: 25px;
+        left: 10px;
+        top: 10px;
+        background-color: rgb(255, 252, 252);
+        font-size: 15px;
+        font-family: Arial;
+    }
+
+    .lateral {
+        position: fixed;
+        width: 200px; 
+        background-color: bisque;
+        right: 5px;
+top: 5px;
+padding: 10px;
+border-radius: 10px;
+    }
+
+    .lateral .elemento {
+        background-color: rgb(70, 214, 123);
+        color: aliceblue;
+        text-align: center;
+        margin-left: 20px;
+        width: 160px;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+
+
+    .textarea {
+        position: fixed;
+        width: 400px;
+        height: 100px;
+        left: 10px;
+        top: 45px;
+        background-color: rgb(255, 252, 252);
+        font-size: 15px;
+        font-family: Arial;
+    }
+</style>
+
+<body>
+    <div class="form">
+         
+    </div>
+
+
+    <div class="lateral">
+        <br>
+        <div class="elemento" id="Add">Add Elemento</div>
+        <br>
+        <div class="elemento" id="Gerar">Gerar</div>
+        <br>
+        <br>
+		<p>Pos Y:</p>
+        <input type="number" value="10" name="" id="t">
+        <br>
+		<p>Pos X:</p>
+        <input type="number" value="10" name="" id="l">
+		<br>
+		<p>Largura:</p>
+        <input type="number" value="10" name="" id="w">
+        <br>
+		<p>Altura:</p>
+        <input type="number" value="10" name="" id="h">
+        <br>
+		
+        <br>
+        <br>
+        <br>
+
+         <p>Codigo:</p>
+		<textarea id="final" style="width:170px;resize:none" cols="30" rows="10"></textarea>
+    </div>
+
+
+</body>
+<script>
+
+var itematual=0;
+
+
+setInterval(() => {
+    if(document.getElementById(itematual)){
+
+        document.getElementById(itematual).style.width = document.getElementById('w').value+'px'
+        document.getElementById(itematual).style.hyphens = document.getElementById('h').value+'px'
+        document.getElementById(itematual).style.top = document.getElementById('t').value+'px'
+        document.getElementById(itematual).style.left = document.getElementById('l').value+'px'
+    }
+}, 1);
+
+    document.getElementById('Gerar').addEventListener('click', () => {
+
+        document.getElementById('final').innerHTML= gerarCodigo()
+    })
+
+
+    document.getElementById('Add').addEventListener('click', () => {
+
+        criar('button')
+    })
+
+
+
+    function criar(tipo = 'button') {
+        for (let i = 0; i < 100; i++) {
+
+            if (!document.getElementById(i)) {
+                const bb = document.createElement(tipo)
+                bb.id = i
+                bb.textContent = 'Button_'+i
+                document.body.appendChild(bb)
+                itematual = i;
+                break;
+            }
+        }
+		 document.getElementById('w').value = 100;
+         document.getElementById('h').value = 30;
+         document.getElementById('t').value = 10;
+         document.getElementById('l').value = 10;
+    }
+
+
+
+    function gerarCodigo() {
+        var final = '';
+        for (let i = 0; i < 100; i++) {
+
+            if (document.getElementById(i)) {
+
+                var bb = document.getElementById(i)
+                var index2 = i + 100;
+               // final += `addButton(hwnd,${index2},L"Botao",${bb.offsetWidth},${bb.offsetHeight},${bb.offsetTop},${bb.offsetLeft});`
+                final += `addButton(hwnd,${index2},L"Botao",${bb.offsetLeft},${bb.offsetTop},${bb.offsetWidth},${bb.offsetHeight});\n`
+
+
+            }
+        }
+        return final
+    }
+
+
+
+</script>
+
+</html>
