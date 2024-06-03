@@ -8,7 +8,11 @@
 #include <string>
 #include <locale>
 #include <codecvt>
+#include <tlhelp32.h>
 using namespace std;
+
+HANDLE g_hThread = NULL; // Handle da thread global
+volatile bool g_bRun = true; // Variável de controle global
 
 //Identificadores dos controles
 //Cada elemento criado, precisa criar uma variavel pra ele nesse ENUM
@@ -234,6 +238,162 @@ std::string LPCWSTRToString(LPCWSTR texto) {
     return converter.to_bytes(wtexto);
 }
 
+extern "C" __declspec(dllexport) void UnloadDll(HMODULE hModule) {
+    g_bRun = false;
+    if (g_hThread) {
+        WaitForSingleObject(g_hThread, INFINITE);
+        CloseHandle(g_hThread);
+    }
+    FreeLibraryAndExitThread(hModule, 0);
+}
+
+ 
+
+DWORD GetProcessIdByName(const std::wstring& processName) {
+    DWORD processId = 0;
+    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    if (snapshot != INVALID_HANDLE_VALUE) {
+        PROCESSENTRY32W processEntry;
+        processEntry.dwSize = sizeof(PROCESSENTRY32W);
+        if (Process32FirstW(snapshot, &processEntry)) {
+            do {
+                if (_wcsicmp(processEntry.szExeFile, processName.c_str()) == 0) {
+                    processId = processEntry.th32ProcessID;
+                    break;
+                }
+            } while (Process32NextW(snapshot, &processEntry));
+        }
+        CloseHandle(snapshot);
+    }
+    return processId;
+}
+
+int alterarINT(HWND hwnd)
+{
+    const std::wstring targetProcessName = L"notepad.exe";
+
+    // Obter o ID do processo alvo
+    DWORD processId = GetProcessIdByName(targetProcessName);
+    if (processId == 0) {
+        //std::cerr << "Processo não encontrado." << std::endl;
+        MsgBox_OK(hwnd, L"bla", L"Processo não encontrado.");
+        return 1;
+    }
+
+    // Abrir o processo alvo com permissões de leitura/escrita
+    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, processId);
+    if (hProcess == NULL) {
+        //std::cerr << "Falha ao abrir o processo." << std::endl;
+        MsgBox_OK(hwnd, L"bla", L"Falha ao abrir o processo.");
+        return 1;
+    }
+
+    // Endereço de memória alvo e novo valor
+    LPCVOID targetAddress = (LPCVOID)0xD1FC4B9BB0; // Substitua pelo endereço real
+    int newValue = 42; // Novo valor a ser escrito
+
+    // Escrever o novo valor no endereço de memória alvo
+    SIZE_T bytesWritten;
+    if (WriteProcessMemory(hProcess, (LPVOID)targetAddress, &newValue, sizeof(newValue), &bytesWritten)) {
+        //std::cout << "Memória alterada com sucesso." << std::endl;
+        MsgBox_OK(hwnd, L"bla", L"Memória alterada com sucesso.");
+
+    }
+    else {
+        //std::cerr << "Falha ao alterar a memória." << std::endl;
+        MsgBox_OK(hwnd, L"bla", L"Falha ao alterar a memória.");
+    }
+
+    // Fechar o handle do processo
+    CloseHandle(hProcess);
+}
+
+int altararFloat(HWND hwnd)
+{
+    // Nome do processo alvo
+    const wchar_t* targetProcessName = L"target_process.exe";
+
+    // Obter o ID do processo alvo
+    DWORD processId = GetProcessIdByName(targetProcessName);
+    if (processId == 0) {
+        //std::cerr << "Processo não encontrado." << std::endl;
+        return 1;
+    }
+
+    // Abrir o processo alvo com permissões de leitura/escrita
+    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, processId);
+    if (hProcess == NULL) {
+        //std::cerr << "Falha ao abrir o processo." << std::endl;
+        return 1;
+    }
+
+    // Endereço de memória alvo e novo valor
+    LPVOID targetAddress = (LPVOID)0x12345678; // Substitua pelo endereço real
+    float newValue = 3.14f; // Novo valor a ser escrito (por exemplo, pi)
+
+    // Escrever o novo valor no endereço de memória alvo
+    SIZE_T bytesWritten;
+    if (WriteProcessMemory(hProcess, targetAddress, &newValue, sizeof(newValue), &bytesWritten)) {
+       // std::cout << "Memória alterada com sucesso." << std::endl;
+    }
+    else {
+       // std::cerr << "Falha ao alterar a memória." << std::endl;
+    }
+
+    // Fechar o handle do processo
+    CloseHandle(hProcess);
+
+    return 0;
+}
+
+
+int lerMemoriaINT(HWND hwnd)
+{
+    // Nome do processo alvo
+    const wchar_t* targetProcessName = L"notepad.exe";
+
+    // Obter o ID do processo alvo
+    DWORD processId = GetProcessIdByName(targetProcessName);
+    if (processId == 0) {
+        MsgBox_OK(hwnd, L"bla", L"Processo não encontrado.");
+        return 1;
+    }
+
+    // Abrir o processo alvo com permissões de leitura
+    HANDLE hProcess = OpenProcess(PROCESS_VM_READ, FALSE, processId);
+    if (hProcess == NULL) {
+        MsgBox_OK(hwnd, L"bla", L"Processo falha ao abrir");
+        return 1;
+    }
+
+    // Endereço de memória alvo
+    LPVOID targetAddress = (LPVOID)0xC992F99CB0; // Substitua pelo endereço real
+
+    // Variável para armazenar o valor lido
+    int value = 0;
+
+    // Ler o valor do endereço de memória alvo
+    SIZE_T bytesRead;
+    if (ReadProcessMemory(hProcess, targetAddress, &value, sizeof(value), &bytesRead)) {
+        //std::cout << "Valor lido: " << value << std::endl;
+         
+        std::wstring wideStr = std::to_wstring(value);
+
+        // Alocar memória para o LPCWSTR e copiar a string wide para lá
+        wchar_t* result = new wchar_t[wideStr.length() + 1];
+        wcscpy_s(result, wideStr.length() + 1, wideStr.c_str());
+        MsgBox_OK(hwnd, L"bla", result);
+    }
+    else {
+        MsgBox_OK(hwnd, L"bla", L"Processo falha ao ler emroaira");
+    }
+
+    // Fechar o handle do processo
+    CloseHandle(hProcess);
+
+    return 0;
+}
+
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
@@ -241,10 +401,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
         
 
-        addListBox(hwnd,Botoes::Botao_1);
-        addItemListBox(hwnd, Botoes::Botao_1,L"a");
-        addItemListBox(hwnd, Botoes::Botao_1,L"b");
-        addItemListBox(hwnd, Botoes::Botao_1,L"c");
+        addButton(hwnd, Botoes::Botao_1, L"Botao 1", 10, 10, 80, 25);
+        //addListBox(hwnd,Botoes::Botao_1);
+        //addItemListBox(hwnd, Botoes::Botao_1,L"a");
+        //addItemListBox(hwnd, Botoes::Botao_1,L"b");
+        //addItemListBox(hwnd, Botoes::Botao_1,L"c");
         
          
         
@@ -269,7 +430,14 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     case WM_COMMAND: {
         if (CLICOU_NO_BOTAO(hwnd,wParam,Botoes::Botao_1))
         {
-              MsgBox_OK(hwnd,  L"bla", L"Clicou VOID string"); 
+             // MsgBox_OK(hwnd,  L"bla", L"Clicou VOID string"); 
+            lerMemoriaINT(hwnd);
+               
+             // g_bRun = false;
+             // if (g_hThread) {
+              //    WaitForSingleObject(g_hThread, INFINITE);
+              //    CloseHandle(g_hThread);
+             // }
         }
         else if (CLICOU_NO_BOTAO(hwnd,wParam,Botoes::CheckBox))
         {
@@ -325,7 +493,7 @@ DWORD WINAPI ThreadProc(LPVOID lpParam) {
     ShowWindow(hwnd, SW_SHOW);
 
     MSG msg;
-    while (GetMessageW(&msg, NULL, 0, 0)) {
+    while (g_bRun && GetMessageW(&msg, NULL, 0, 0)) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
         loop();
@@ -344,7 +512,32 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
     case DLL_THREAD_ATTACH:
     case DLL_THREAD_DETACH:
     case DLL_PROCESS_DETACH:
+        g_bRun = false;
+
+        // Espera a thread terminar
+        if (g_hThread) {
+            WaitForSingleObject(g_hThread, INFINITE);
+            CloseHandle(g_hThread);
+        }
         break;
     }
     return TRUE;
+}
+
+LPCWSTR IntToLPCWSTR(int intValue) {
+    // Converter o inteiro para uma string wide
+    std::wstring wideStr = std::to_wstring(intValue);
+
+    // Alocar memória para o LPCWSTR e copiar a string wide para lá
+    wchar_t* result = new wchar_t[wideStr.length() + 1];
+    wcscpy_s(result, wideStr.length() + 1, wideStr.c_str());
+
+    // Retornar o LPCWSTR
+    return result;
+}
+
+string intToString(int intValue) { 
+    char buffer[20]; // Tamanho do buffer deve ser grande o suficiente para a string resultante
+    sprintf(buffer, "%d", intValue);
+    return buffer;
 }

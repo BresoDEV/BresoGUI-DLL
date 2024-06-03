@@ -1,14 +1,15 @@
-﻿  pch.cpp
-  dllmain.cpp
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(111,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(120,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(126,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(132,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(143,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(149,5): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(159,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(174,1): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(191,30): warning C4244: 'inicializando': conversão de 'LRESULT' para 'int', possível perda de dados
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(204,26): warning C4244: 'inicializando': conversão de 'LRESULT' para 'int', possível perda de dados
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(60): warning C4172: retornando o endereço da variável local ou temporário: buffer
+﻿  dllmain.cpp
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(115,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(124,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(130,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(136,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(147,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(153,5): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(163,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(178,1): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(195,30): warning C4244: 'inicializando': conversão de 'LRESULT' para 'int', possível perda de dados
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(208,26): warning C4244: 'inicializando': conversão de 'LRESULT' para 'int', possível perda de dados
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(64): warning C4172: retornando o endereço da variável local ou temporário: buffer
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(309): warning C4715: 'alterarINT': nem todos os caminhos de controle retornam um valor
+     Criando biblioteca C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\x64\Debug\BresoGUI.lib e objeto C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\x64\Debug\BresoGUI.exp
   BresoGUI.vcxproj -> C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\x64\Debug\BresoGUI.dll
