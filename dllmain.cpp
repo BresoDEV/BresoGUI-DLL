@@ -9,6 +9,8 @@
 #include <locale>
 #include <codecvt>
 #include <tlhelp32.h>
+#include <sstream>
+#include <iomanip>
 using namespace std;
 
 HANDLE g_hThread = NULL; // Handle da thread global
@@ -84,9 +86,25 @@ LPCWSTR to_LPCWSTR(DWORD value) {
 }
 
 
+ 
+/// <summary>
+/// Por um .c_str() no final
+/// Ex:
+/// to_LPCWSTR("bla").c_str()
+/// </summary>
+/// <param name="str"></param>
+/// <returns></returns>
+std::wstring to_LPCWSTR(const std::string& str) {
+    int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), NULL, 0);
+    std::wstring wstrTo(size_needed, 0);
+    MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), &wstrTo[0], size_needed);
+    return wstrTo;
+}
+
+
 string concatenar(string t1, int t2, string t3, int t4) {
     char buffer[1020];
-    sprintf_s(buffer, "%s %d %s %d", t1, t2, t3, t4);
+    sprintf_s(buffer, sizeof(buffer), "%s %d %s %d", t1.c_str(), t2, t3.c_str(), t4);
     return buffer;
 }
 
@@ -105,6 +123,14 @@ LPCWSTR GET_INPUT_TEXT(HWND hwnd, int BotaoENUM)
 void MsgBox_OK(HWND hwnd, LPCWSTR titulo, LPCWSTR texto)
 {
     MessageBoxW(hwnd, texto, titulo, MB_OK | MB_ICONINFORMATION);
+}
+void MsgBox_OK_semIcone(HWND hwnd, LPCWSTR titulo, LPCWSTR texto)
+{
+    MessageBoxW(hwnd, texto, titulo, MB_OK | MB_USERICON);
+}
+void MsgBox_Erro(HWND hwnd, LPCWSTR titulo, LPCWSTR texto)
+{
+    MessageBoxW(hwnd, texto, titulo, MB_OK | MB_ICONHAND);
 }
 
 bool IF_CHECKBOX_CHECKED(HWND hwnd, int CheckboxEnum)
@@ -280,7 +306,7 @@ void LOG(const std::string& texto) {
 
 
 
-extern "C" __declspec(dllexport) void UnloadDll(HMODULE hModule) {
+  void UnloadDll(HMODULE hModule) {
     g_bRun = false;
     if (g_hThread) {
         WaitForSingleObject(g_hThread, INFINITE);
@@ -289,6 +315,17 @@ extern "C" __declspec(dllexport) void UnloadDll(HMODULE hModule) {
     FreeLibraryAndExitThread(hModule, 0);
 }
 
+  void UnloadSelf() {
+    HMODULE hModule = nullptr;
+    // Obtém o handle da DLL atual
+    GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+        reinterpret_cast<LPCTSTR>(&UnloadSelf),
+        &hModule);
+
+    if (hModule != nullptr) {
+        FreeLibrary(hModule);
+    }
+}
 
  
 
@@ -393,16 +430,68 @@ int lerMemoriaINT(HWND hwnd, LPCWSTR processoEXE, LPVOID memoria)
 
 
 
+std::string ConvertToHexString(DWORD_PTR value) {
+    std::stringstream ss;
+    ss << "0x" << std::hex << std::uppercase << value;
+    return ss.str();
+}
+
+std::wstring ConvertToHexWString(DWORD_PTR value) {
+    std::wstringstream ws;
+    ws << L"0x" << std::hex << std::uppercase << value;
+    return ws.str();
+}
+
+
+BYTE* GetModuleBaseAddress(DWORD processId) {
+    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, processId);
+    if (snapshot != INVALID_HANDLE_VALUE) {
+        MODULEENTRY32 moduleEntry;
+        moduleEntry.dwSize = sizeof(MODULEENTRY32);
+
+        if (Module32First(snapshot, &moduleEntry)) {
+            do {
+                // Retorna o endereço base do primeiro módulo (assumidamente o módulo principal)
+                return moduleEntry.modBaseAddr;
+            } while (Module32Next(snapshot, &moduleEntry));
+        }
+        CloseHandle(snapshot);
+    }
+    return nullptr; // Retorna nullptr se nenhum módulo for encontrado
+}
+
+ULONG_PTR GetModuleBaseAddresss(DWORD processId) {
+    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, processId);
+    if (snapshot != INVALID_HANDLE_VALUE) {
+        MODULEENTRY32 moduleEntry;
+        moduleEntry.dwSize = sizeof(MODULEENTRY32);
+
+        if (Module32First(snapshot, &moduleEntry)) {
+            do {
+                // Retorna o endereço base do primeiro módulo (assumidamente o módulo principal)
+                return reinterpret_cast<ULONG_PTR>(moduleEntry.modBaseAddr);
+            } while (Module32Next(snapshot, &moduleEntry));
+        }
+        CloseHandle(snapshot);
+    }
+    return 0; // Retorna 0 se nenhum módulo for encontrado
+}
+ 
+
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
     case WM_CREATE: {
 
+         
+        addButton(hwnd,/*id do elemento*/100, L"Botao", 10, 10, 100, 30);
+        addButton(hwnd,/*id do elemento*/101, L"Botao", 10, 50, 100, 30);
+        addButton(hwnd,/*id do elemento*/102, L"Botao", 10, 90, 100, 30);
+        addButton(hwnd,/*id do elemento*/103, L"Botao", 10, 130, 100, 30);
+        addButton(hwnd,/*id do elemento*/104, L"Botao", 10, 170, 100, 30);
+        addButton(hwnd,/*id do elemento*/105, L"Botao", 10, 210, 100, 30);
+        addProgressBar(hwnd,/*id do elemento*/106, 10, 250, 106, 36);
 
-        addButton(hwnd, 100, L"Botao",  10, 10,100,25); 
-        addButton(hwnd, 101, L"Botao",  10, 40, 100, 25);
-        addButton(hwnd, 102, L"Botao",  10, 70, 100, 25);
-        addButton(hwnd, 103, L"Botao",  10, 100, 100, 25);
         //addButton(hwnd, Botoes::Botao_1, L"Botao 1", 10, 10, 80, 25);
         //addListBox(hwnd,Botoes::Botao_1);
         //addItemListBox(hwnd, Botoes::Botao_1,L"a");
@@ -427,20 +516,31 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         addProgressBar(hwnd, Botoes::ProgressBar);
         addRadio(hwnd, Botoes::Radio1,L"Meu Radio");
         */
+
+
+
         break;
     }
     case WM_COMMAND: {
-        if (CLICOU_NO_BOTAO(hwnd, wParam, Botoes::Botao_1))
+        if (CLICOU_NO_BOTAO(hwnd, wParam, 100))
         {
             
-             MsgBox_OK(hwnd,  L"bla", to_LPCWSTR(GetProcessIdByName(L"notepad.exe")));
+             // MsgBox_OK(hwnd,  L"bla", to_LPCWSTR(concatenar("oi ", 123, "tudo", 321)).c_str());
+            MessageBoxW(hwnd, L"", L"olar", MB_OK | MB_ICONINFORMATION);
+            MessageBoxW(hwnd, L"", L"MB_OKCANCEL", MB_OKCANCEL | MB_ICONINFORMATION);
+            MessageBoxW(hwnd, L"", L"MB_ABORTRETRYIGNORE", MB_ABORTRETRYIGNORE | MB_ICONINFORMATION);
+            MessageBoxW(hwnd, L"", L"MB_YESNOCANCEL", MB_YESNOCANCEL | MB_ICONINFORMATION);
+            MessageBoxW(hwnd, L"", L"MB_YESNO", MB_YESNO | MB_ICONINFORMATION);
+            MessageBoxW(hwnd, L"", L"MB_RETRYCANCEL", MB_RETRYCANCEL | MB_ICONINFORMATION);
+            MessageBoxW(hwnd, L"", L"MB_CANCELTRYCONTINUE", MB_CANCELTRYCONTINUE | MB_ICONINFORMATION);
+            MessageBoxW(hwnd, L"", L"MB_ICONHAND", MB_OK | MB_ICONHAND);
+            MessageBoxW(hwnd, L"", L"MB_ICONQUESTION", MB_OK | MB_ICONQUESTION);
+              
             //lerMemoriaINT(hwnd);
 
-            // g_bRun = false;
-            // if (g_hThread) {
-             //    WaitForSingleObject(g_hThread, INFINITE);
-             //    CloseHandle(g_hThread);
-            // }
+            //UnloadSelf();
+
+             
         }
         else if (CLICOU_NO_BOTAO(hwnd, wParam, Botoes::CheckBox))
         {
@@ -490,7 +590,7 @@ DWORD WINAPI ThreadProc(LPVOID lpParam) {
     wc.hbrBackground = hBrush;
     RegisterClassW(&wc);
 
-    HWND hwnd = CreateWindowExW(0, L"MainWindow", TitulosJanela, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, LarguraJanela, AlturaJanela, NULL, NULL, hInstance, NULL);
+    HWND hwnd = CreateWindowExW(WS_EX_TOPMOST, L"MainWindow", TitulosJanela,   WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, LarguraJanela, AlturaJanela, NULL, NULL, hInstance, NULL);
     if (hwnd == NULL) return 0;
 
     ShowWindow(hwnd, SW_SHOW);
@@ -515,15 +615,13 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
     case DLL_THREAD_ATTACH:
     case DLL_THREAD_DETACH:
     case DLL_PROCESS_DETACH:
-        g_bRun = false;
+        UnloadDll(hModule);
 
-        // Espera a thread terminar
-        if (g_hThread) {
-            WaitForSingleObject(g_hThread, INFINITE);
-            CloseHandle(g_hThread);
-        }
+        
         break;
+
     }
+    
     return TRUE;
 }
 

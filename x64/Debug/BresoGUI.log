@@ -1,16 +1,14 @@
 ﻿  dllmain.cpp
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(89,23): warning C4477: 'sprintf_s': a cadeia de formato '%s' requer um argumento do tipo 'char *', mas um argumento variadic 1 tem o tipo 'std::string'
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(89,23): warning C4477: 'sprintf_s': a cadeia de formato '%s' requer um argumento do tipo 'char *', mas um argumento variadic 3 tem o tipo 'std::string'
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(153,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(162,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(168,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(174,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(185,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(191,5): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(201,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(216,1): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(233,30): warning C4244: 'inicializando': conversão de 'LRESULT' para 'int', possível perda de dados
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(246,26): warning C4244: 'inicializando': conversão de 'LRESULT' para 'int', possível perda de dados
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(99): warning C4172: retornando o endereço da variável local ou temporário: buffer
-C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(339): warning C4715: 'alterarINT': nem todos os caminhos de controle retornam um valor
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(179,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(188,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(194,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(200,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(211,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(217,5): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(227,23): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(242,1): warning C4312: 'conversão de tipo': conversão de 'int' para 'HMENU' de tamanho maior
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(259,30): warning C4244: 'inicializando': conversão de 'LRESULT' para 'int', possível perda de dados
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(272,26): warning C4244: 'inicializando': conversão de 'LRESULT' para 'int', possível perda de dados
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(117): warning C4172: retornando o endereço da variável local ou temporário: buffer
+C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\dllmain.cpp(376): warning C4715: 'alterarINT': nem todos os caminhos de controle retornam um valor
   BresoGUI.vcxproj -> C:\Users\usuario\Documents\GitHub\BresoGUI-DLL\x64\Debug\BresoGUI.dll

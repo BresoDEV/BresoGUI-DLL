@@ -12,9 +12,11 @@
         margin: 0;
         padding: 0;
     }
-	html,body{
-	background-color: black;
-	}
+
+    html,
+    body {
+        background-color: black;
+    }
 
     .form {
         position: fixed;
@@ -23,7 +25,7 @@
         left: 0;
         top: 0;
         background-color: rgb(188, 188, 188);
-		 
+
     }
 
     button {
@@ -38,23 +40,27 @@
     }
 
     .lateral {
+        columns: 2;
         position: fixed;
-        width: 200px; 
+        width: 600px;
         background-color: bisque;
         right: 5px;
-top: 5px;
-padding: 10px;
-border-radius: 10px;
+        top: 5px;
+        padding: 10px;
+        border-radius: 10px;
+        font-size: small;
     }
 
     .lateral .elemento {
         background-color: rgb(70, 214, 123);
         color: aliceblue;
         text-align: center;
-        margin-left: 20px;
+        margin-left: 0px;
         width: 160px;
         border-radius: 10px;
         cursor: pointer;
+        margin-bottom: 3px;
+        user-select: none;
     }
 
 
@@ -72,100 +78,235 @@ border-radius: 10px;
 </style>
 
 <body>
-    <div class="form">
-         
+    <div class="form" id="form">
+
     </div>
 
 
     <div class="lateral">
+        <p id="proporcaoTela"></p>
+        <input type="number" value="500" name="" id="x">
+        <input type="number" value="500" name="" id="y">
         <br>
-        <div class="elemento" id="Add">Add Elemento</div>
+        <br>
+        <br>
+        <div class="elemento" id="AddButton">Add Button</div>
+        <div class="elemento" id="AddInput">Add Input</div>
+        <div class="elemento" id="AddTextArea">Add Textarea</div>
+        <div class="elemento" id="AddCheckbox">Add Checkbox</div>
+        <div class="elemento" id="AddCombobox">Add Combobox</div>
+        <div class="elemento" id="AddProgressBar">Add ProgressBar</div>
+        <div class="elemento" id="AddRadio">Add Radio</div>
+        <br>
+        
+        <br>
+        <br>
+        <br><br>
+        <br>
+        <br>
+         
+        <p>Pos Y:</p>
+        <input type="number" value="10" name="" id="t">
+        <br>
+        <p>Pos X:</p>
+        <input type="number" value="10" name="" id="l">
+        <br>
+        <p>Largura:</p>
+        <input type="number" value="10" name="" id="w">
+        <br>
+        <p>Altura:</p>
+        <input type="number" value="10" name="" id="h">
+        <br>
+
+        <br>
         <br>
         <div class="elemento" id="Gerar">Gerar</div>
         <br>
-        <br>
-		<p>Pos Y:</p>
-        <input type="number" value="10" name="" id="t">
-        <br>
-		<p>Pos X:</p>
-        <input type="number" value="10" name="" id="l">
-		<br>
-		<p>Largura:</p>
-        <input type="number" value="10" name="" id="w">
-        <br>
-		<p>Altura:</p>
-        <input type="number" value="10" name="" id="h">
-        <br>
-		
-        <br>
-        <br>
-        <br>
 
-         <p>Codigo:</p>
-		<textarea id="final" style="width:170px;resize:none" cols="30" rows="10"></textarea>
+        <p>Codigo:</p>
+        <textarea id="final" style="width:170px;resize:none" cols="30" rows="5"></textarea>
     </div>
 
 
 </body>
 <script>
 
-var itematual=0;
+    var itematual = 0;
+    var selecionado = 0;
 
+    
+   
+    setInterval(() => {
+        document.getElementById('proporcaoTela').innerHTML= 'Tamanho da Janela: '+document.getElementById('form').offsetWidth+'x'+document.getElementById('form').offsetHeight +'<br><br>'
 
-setInterval(() => {
-    if(document.getElementById(itematual)){
+        document.getElementById('form').style.width = document.getElementById('x').value+'px';
+    document.getElementById('form').style.height = document.getElementById('y').value+'px';
+        //Atual
+        //selecionado = parseInt(document.getElementById('Atual').value)
+        if (document.getElementById('item_' + selecionado)) {
 
-        document.getElementById(itematual).style.width = document.getElementById('w').value+'px'
-        document.getElementById(itematual).style.hyphens = document.getElementById('h').value+'px'
-        document.getElementById(itematual).style.top = document.getElementById('t').value+'px'
-        document.getElementById(itematual).style.left = document.getElementById('l').value+'px'
-    }
-}, 1);
+            document.getElementById('item_' + selecionado).style.width = document.getElementById('w').value + 'px'
+            document.getElementById('item_' + selecionado).style.height = document.getElementById('h').value + 'px'
+            document.getElementById('item_' + selecionado).style.top = document.getElementById('t').value + 'px'
+            document.getElementById('item_' + selecionado).style.left = document.getElementById('l').value + 'px'
+        }
+
+        var todos = document.querySelectorAll('*')
+        todos.forEach(e => {
+            if (e.id == 'item_' + selecionado) {
+                e.style.border = '3px solid lime';
+            }
+            else {
+                e.style.border = 'none';
+            }
+        });
+
+    }, 1);
 
     document.getElementById('Gerar').addEventListener('click', () => {
 
-        document.getElementById('final').innerHTML= gerarCodigo()
+        document.getElementById('final').innerHTML = gerarCodigo()
     })
 
 
-    document.getElementById('Add').addEventListener('click', () => {
+    document.getElementById('AddButton').addEventListener('click', () => {
 
         criar('button')
     })
 
+    document.getElementById('AddInput').addEventListener('click', () => {
+        criar('input') 
+    })
+
+    document.getElementById('AddTextArea').addEventListener('click', () => {
+        criar('textarea') 
+    })
+
+    document.getElementById('AddCheckbox').addEventListener('click', () => {
+        criar('checkbox') 
+    })
+
+    document.getElementById('AddCombobox').addEventListener('click', () => {
+        criar('select') 
+    })
+    document.getElementById('AddProgressBar').addEventListener('click', () => {
+        criar('progressbar') 
+    })
+
+    document.getElementById('AddRadio').addEventListener('click', () => {
+        criar('radio') 
+    })
 
 
-    function criar(tipo = 'button') {
-        for (let i = 0; i < 100; i++) {
 
-            if (!document.getElementById(i)) {
-                const bb = document.createElement(tipo)
-                bb.id = i
-                bb.textContent = 'Button_'+i
-                document.body.appendChild(bb)
-                itematual = i;
+    function criar(tipo) {
+        for (let i = 0; i < 1000; i++) {
+
+            if (!document.getElementById('item_' + i)) {
+
+                var bb;
+                if(tipo == 'checkbox')
+                {
+                    bb = document.createElement('input')
+                    bb.type='checkbox'
+                }
+                
+                else if(tipo == 'radio')
+                {
+                    bb = document.createElement('input')
+                    bb.type='radio'
+                }
+                
+                else if(tipo == 'progressbar')
+                {
+                    bb = document.createElement('div')
+                    bb.style.backgroundColor='lime'
+                }
+                
+                else{
+                    bb = document.createElement(tipo)
+                    bb.style.backgroundColor='white'
+                }
+
+                
+                bb.id = 'item_' + i
+                bb.textContent = tipo+'_' + i
+                bb.value = tipo+'_' + i
+                
+                bb.className = 'textarea'
+               bb.style.resize='none'
+
+
+                
+
+
+                document.getElementById('form').appendChild(bb)
+                selecionado = i;
+
+                console.log(bb.tagName + ' '+bb.type)
+                //document.getElementById('Atual').value = selecionado;
+                //document.getElementById('Atual').max = selecionado;
                 break;
             }
         }
-		 document.getElementById('w').value = 100;
-         document.getElementById('h').value = 30;
-         document.getElementById('t').value = 10;
-         document.getElementById('l').value = 10;
+        document.getElementById('w').value = 100;
+        document.getElementById('h').value = 30;
+        document.getElementById('t').value = 10;
+        document.getElementById('l').value = 10;
     }
 
+    //document.getElementById('Atual').addEventListener('input',()=>{
+    //    document.getElementById('w').value = parseInt(document.getElementById('item_' + selecionado).offsetWidth)
+    //    document.getElementById('h').value = parseInt(document.getElementById('item_' + selecionado).offsetHeight)
+    //    document.getElementById('t').value = parseInt(document.getElementById('item_' + selecionado).offsetTop)
+    //    document.getElementById('l').value = parseInt(document.getElementById('item_' + selecionado).offsetLeft)
+    //})
 
 
     function gerarCodigo() {
-        var final = '';
-        for (let i = 0; i < 100; i++) {
+        var final = `//Topo do codigo\nint LarguraJanela = ${document.getElementById('form').offsetWidth};\nint AlturaJanela = ${document.getElementById('form').offsetHeight};\n\n//Dentro do case WM_CREATE:\n\n`;
+       
+        for (let i = 0; i < 1000; i++) {
 
-            if (document.getElementById(i)) {
+            if (document.getElementById('item_' + i)) {
 
-                var bb = document.getElementById(i)
+                var bb = document.getElementById('item_' + i)
                 var index2 = i + 100;
-               // final += `addButton(hwnd,${index2},L"Botao",${bb.offsetWidth},${bb.offsetHeight},${bb.offsetTop},${bb.offsetLeft});`
-                final += `addButton(hwnd,${index2},L"Botao",${bb.offsetLeft},${bb.offsetTop},${bb.offsetWidth},${bb.offsetHeight});\n`
-
+                console.log(bb.tagName)
+                // final += `addButton(hwnd,${index2},L"Botao",${bb.offsetWidth},${bb.offsetHeight},${bb.offsetTop},${bb.offsetLeft});`
+                if(bb.tagName=='BUTTON')
+                {
+                    final += `addButton(hwnd,/*id do elemento*/${index2},L"Botao",${bb.offsetLeft},${bb.offsetTop},${bb.offsetWidth},${bb.offsetHeight});\n`
+                }
+                else  if(bb.tagName=='TEXTAREA')
+                {
+                    final += `addTextarea(hwnd,/*id do elemento*/${index2},L"Botao",${bb.offsetLeft},${bb.offsetTop},${bb.offsetWidth},${bb.offsetHeight});\n`
+                }
+                else  if(bb.tagName=='INPUT')
+                {
+                   if(bb.type == 'text')
+                   {
+                    final += `addInput(hwnd,/*id do elemento*/${index2},L"Botao",${bb.offsetLeft},${bb.offsetTop},${bb.offsetWidth},${bb.offsetHeight});\n`
+                   }
+                   if(bb.type == 'radio')
+                   {
+                    final += `addRadio(hwnd,/*id do elemento*/${index2},L"Botao",${bb.offsetLeft},${bb.offsetTop},${bb.offsetWidth},${bb.offsetHeight});\n`
+                   }
+                   if(bb.type == 'checkbox')
+                   {
+                    final += `addCheckBox(hwnd,/*id do elemento*/${index2},L"Botao",${bb.offsetLeft},${bb.offsetTop},${bb.offsetWidth},${bb.offsetHeight});\n`
+                   }
+                   
+                }
+                else  if(bb.tagName=='SELECT')
+                {
+                    final += `addCombobox(hwnd,/*id do elemento*/${index2},${bb.offsetLeft},${bb.offsetTop},${bb.offsetWidth},${bb.offsetHeight});\n`
+                }
+                else  if(bb.tagName=='DIV')
+                {
+                    final += `addProgressBar(hwnd,/*id do elemento*/${index2},${bb.offsetLeft},${bb.offsetTop},${bb.offsetWidth},${bb.offsetHeight});\n`
+                }
+                
 
             }
         }
