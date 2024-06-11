@@ -52,7 +52,7 @@
     }
 
     .lateral .elemento {
-        background-color: rgb(70, 214, 123);
+        background-color: rgb(121, 152, 133);
         color: aliceblue;
         text-align: center;
         margin-left: 0px;
@@ -61,6 +61,12 @@
         cursor: pointer;
         margin-bottom: 3px;
         user-select: none;
+        transition: 1s scale;
+    }
+
+    .lateral .elemento:hover {
+        background-color: rgb(70, 214, 123);
+        scale: 1.1;
     }
 
 
@@ -98,13 +104,13 @@
         <div class="elemento" id="AddProgressBar">Add ProgressBar</div>
         <div class="elemento" id="AddRadio">Add Radio</div>
         <br>
-        
+
         <br>
         <br>
         <br><br>
         <br>
         <br>
-         
+
         <p>Pos Y:</p>
         <input type="number" value="10" name="" id="t">
         <br>
@@ -134,13 +140,13 @@
     var itematual = 0;
     var selecionado = 0;
 
-    
-   
-    setInterval(() => {
-        document.getElementById('proporcaoTela').innerHTML= 'Tamanho da Janela: '+document.getElementById('form').offsetWidth+'x'+document.getElementById('form').offsetHeight +'<br><br>'
 
-        document.getElementById('form').style.width = document.getElementById('x').value+'px';
-    document.getElementById('form').style.height = document.getElementById('y').value+'px';
+
+    setInterval(() => {
+        document.getElementById('proporcaoTela').innerHTML = 'Tamanho da Janela: ' + document.getElementById('form').offsetWidth + 'x' + document.getElementById('form').offsetHeight + '<br><br>'
+
+        document.getElementById('form').style.width = document.getElementById('x').value + 'px';
+        document.getElementById('form').style.height = document.getElementById('y').value + 'px';
         //Atual
         //selecionado = parseInt(document.getElementById('Atual').value)
         if (document.getElementById('item_' + selecionado)) {
@@ -164,8 +170,7 @@
     }, 1);
 
     document.getElementById('Gerar').addEventListener('click', () => {
-
-        document.getElementById('final').innerHTML = gerarCodigo()
+        document.getElementById('final').value = gerarCodigo()
     })
 
 
@@ -175,26 +180,26 @@
     })
 
     document.getElementById('AddInput').addEventListener('click', () => {
-        criar('input') 
+        criar('input')
     })
 
     document.getElementById('AddTextArea').addEventListener('click', () => {
-        criar('textarea') 
+        criar('textarea')
     })
 
     document.getElementById('AddCheckbox').addEventListener('click', () => {
-        criar('checkbox') 
+        criar('checkbox')
     })
 
     document.getElementById('AddCombobox').addEventListener('click', () => {
-        criar('select') 
+        criar('select')
     })
     document.getElementById('AddProgressBar').addEventListener('click', () => {
-        criar('progressbar') 
+        criar('progressbar')
     })
 
     document.getElementById('AddRadio').addEventListener('click', () => {
-        criar('radio') 
+        criar('radio')
     })
 
 
@@ -205,45 +210,42 @@
             if (!document.getElementById('item_' + i)) {
 
                 var bb;
-                if(tipo == 'checkbox')
-                {
+                if (tipo == 'checkbox') {
                     bb = document.createElement('input')
-                    bb.type='checkbox'
+                    bb.type = 'checkbox'
                 }
-                
-                else if(tipo == 'radio')
-                {
+
+                else if (tipo == 'radio') {
                     bb = document.createElement('input')
-                    bb.type='radio'
+                    bb.type = 'radio'
                 }
-                
-                else if(tipo == 'progressbar')
-                {
+
+                else if (tipo == 'progressbar') {
                     bb = document.createElement('div')
-                    bb.style.backgroundColor='lime'
+                    bb.style.backgroundColor = 'lime'
                 }
-                
-                else{
+
+                else {
                     bb = document.createElement(tipo)
-                    bb.style.backgroundColor='white'
+                    bb.style.backgroundColor = 'white'
                 }
 
-                
+
                 bb.id = 'item_' + i
-                bb.textContent = tipo+'_' + i
-                bb.value = tipo+'_' + i
-                
+                bb.textContent = tipo + '_' + i
+                bb.value = tipo + '_' + i
+
                 bb.className = 'textarea'
-               bb.style.resize='none'
+                bb.style.resize = 'none'
 
 
-                
+
 
 
                 document.getElementById('form').appendChild(bb)
                 selecionado = i;
 
-                console.log(bb.tagName + ' '+bb.type)
+                console.log(bb.tagName + ' ' + bb.type)
                 //document.getElementById('Atual').value = selecionado;
                 //document.getElementById('Atual').max = selecionado;
                 break;
@@ -265,7 +267,7 @@
 
     function gerarCodigo() {
         var final = `//Topo do codigo\nint LarguraJanela = ${document.getElementById('form').offsetWidth};\nint AlturaJanela = ${document.getElementById('form').offsetHeight};\n\n//Dentro do case WM_CREATE:\n\n`;
-       
+
         for (let i = 0; i < 1000; i++) {
 
             if (document.getElementById('item_' + i)) {
@@ -274,39 +276,31 @@
                 var index2 = i + 100;
                 console.log(bb.tagName)
                 // final += `addButton(hwnd,${index2},L"Botao",${bb.offsetWidth},${bb.offsetHeight},${bb.offsetTop},${bb.offsetLeft});`
-                if(bb.tagName=='BUTTON')
-                {
+                if (bb.tagName == 'BUTTON') {
                     final += `addButton(hwnd,/*id do elemento*/${index2},L"Botao",${bb.offsetLeft},${bb.offsetTop},${bb.offsetWidth},${bb.offsetHeight});\n`
                 }
-                else  if(bb.tagName=='TEXTAREA')
-                {
-                    final += `addTextarea(hwnd,/*id do elemento*/${index2},L"Botao",${bb.offsetLeft},${bb.offsetTop},${bb.offsetWidth},${bb.offsetHeight});\n`
+                else if (bb.tagName == 'TEXTAREA') {
+                    final += `addTextarea(hwnd,/*id do elemento*/${index2},${bb.offsetLeft},${bb.offsetTop},${bb.offsetWidth},${bb.offsetHeight});\n`
                 }
-                else  if(bb.tagName=='INPUT')
-                {
-                   if(bb.type == 'text')
-                   {
-                    final += `addInput(hwnd,/*id do elemento*/${index2},L"Botao",${bb.offsetLeft},${bb.offsetTop},${bb.offsetWidth},${bb.offsetHeight});\n`
-                   }
-                   if(bb.type == 'radio')
-                   {
-                    final += `addRadio(hwnd,/*id do elemento*/${index2},L"Botao",${bb.offsetLeft},${bb.offsetTop},${bb.offsetWidth},${bb.offsetHeight});\n`
-                   }
-                   if(bb.type == 'checkbox')
-                   {
-                    final += `addCheckBox(hwnd,/*id do elemento*/${index2},L"Botao",${bb.offsetLeft},${bb.offsetTop},${bb.offsetWidth},${bb.offsetHeight});\n`
-                   }
-                   
+                else if (bb.tagName == 'INPUT') {
+                    if (bb.type == 'text') {
+                        final += `addInput(hwnd,/*id do elemento*/${index2},L"Botao",${bb.offsetLeft},${bb.offsetTop},${bb.offsetWidth},${bb.offsetHeight});\n`
+                    }
+                    if (bb.type == 'radio') {
+                        final += `addRadio(hwnd,/*id do elemento*/${index2},L"Botao",${bb.offsetLeft},${bb.offsetTop},${bb.offsetWidth},${bb.offsetHeight});\n`
+                    }
+                    if (bb.type == 'checkbox') {
+                        final += `addCheckBox(hwnd,/*id do elemento*/${index2},L"Botao",${bb.offsetLeft},${bb.offsetTop},${bb.offsetWidth},${bb.offsetHeight});\n`
+                    }
+
                 }
-                else  if(bb.tagName=='SELECT')
-                {
+                else if (bb.tagName == 'SELECT') {
                     final += `addCombobox(hwnd,/*id do elemento*/${index2},${bb.offsetLeft},${bb.offsetTop},${bb.offsetWidth},${bb.offsetHeight});\n`
                 }
-                else  if(bb.tagName=='DIV')
-                {
+                else if (bb.tagName == 'DIV') {
                     final += `addProgressBar(hwnd,/*id do elemento*/${index2},${bb.offsetLeft},${bb.offsetTop},${bb.offsetWidth},${bb.offsetHeight});\n`
                 }
-                
+
 
             }
         }
